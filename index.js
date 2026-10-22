@@ -1,9 +1,7 @@
-// State Management
 let tasks = [];
 let currentFilter = 'all';
 const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
-// DOM Element References
 const navHome = document.getElementById('nav-home');
 const navApp = document.getElementById('nav-app');
 const homeView = document.getElementById('home-view');
@@ -17,7 +15,6 @@ const errorBanner = document.getElementById('error-banner');
 const taskCounter = document.getElementById('task-counter');
 const filterButtons = document.querySelectorAll('.filter-btn');
 
-// --- 1. SPA View Switching Logic ---
 function switchView(viewName) {
     if (viewName === 'home') {
         homeView.classList.add('active-view');
@@ -34,14 +31,12 @@ function switchView(viewName) {
         navApp.classList.add('active');
         navHome.classList.remove('active');
         
-        // Fetch tasks on initial load of the app view if empty
         if (tasks.length === 0) {
             fetchTasks();
         }
     }
 }
 
-// --- Error Handling Utility ---
 function showError(message) {
     errorBanner.textContent = message;
     errorBanner.classList.remove('hidden');
@@ -50,7 +45,6 @@ function showError(message) {
     }, 5000);
 }
 
-// --- 2. API Requests: GET & POST ---
 const englishTitles = [
     "complete javascript work",
     "Finish assignments",
@@ -64,7 +58,7 @@ async function fetchTasks() {
         if (!response.ok) throw new Error('Failed to fetch tasks.');
 
         const data = await response.json();
-        //map data to local structure with English titles
+      
         tasks = data.map((item, index) => ({
             id: item.id,
             title: englishTitles[index] || item.title,
@@ -95,9 +89,9 @@ async function postTask(newTaskTitle) {
 
         const savedTask = await response.json();
         
-        // Append to local state with a unique client-side safeguard ID if needed
+      
         tasks.unshift({
-            id: Date.now(), // Fallback unique ID
+            id: Date.now(), 
             title: savedTask.title,
             completed: false
         });
@@ -105,7 +99,7 @@ async function postTask(newTaskTitle) {
         renderTasks();
     } catch (error) {
         showError('Error adding task. Saved locally instead.');
-        // Graceful fallback: add locally even if network request fails
+    
         tasks.unshift({
             id: Date.now(),
             title: newTaskTitle,
@@ -115,15 +109,13 @@ async function postTask(newTaskTitle) {
     }
 }
 
-// --- Rendering & UI Updates ---
 function renderTasks() {
     taskList.innerHTML = '';
 
-    // Filter tasks based on active selection
     const filteredTasks = tasks.filter(task => {
         if (currentFilter === 'pending') return !task.completed;
         if (currentFilter === 'completed') return task.completed;
-        return true; // 'all'
+        return true; 
     });
 
     if (filteredTasks.length === 0) {
@@ -154,16 +146,13 @@ function updateCounter() {
     taskCounter.textContent = `${pendingCount} task${pendingCount === 1 ? '' : 's'} remaining`;
 }
 
-// Security utility to prevent basic XSS injection
+
 function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
     );
 }
 
-// --- 3. Event Listeners (Requirement: submit, click, change) ---
-
-// 1. SUBMIT Event Listener: Handles form submission for new tasks
 taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const title = taskInput.value.trim();
@@ -173,13 +162,11 @@ taskForm.addEventListener('submit', (e) => {
     taskInput.value = '';
 });
 
-// 2. CLICK Event Listener: Handles navigation, filters, deletions, and CTAs
 document.addEventListener('click', (e) => {
-    // Navigation clicks
+
     if (e.target === navHome) switchView('home');
     if (e.target === navApp || e.target === getStartedBtn) switchView('app');
 
-    // Filter button clicks
     if (e.target.classList.contains('filter-btn')) {
         filterButtons.forEach(btn => btn.classList.remove('active'));
         e.target.classList.add('active');
@@ -187,7 +174,6 @@ document.addEventListener('click', (e) => {
         renderTasks();
     }
 
-    // Delete task button clicks
     if (e.target.classList.contains('delete-btn')) {
         const taskItem = e.target.closest('.task-item');
         const taskId = Number(taskItem.dataset.id);
@@ -196,7 +182,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 3. CHANGE Event Listener: Handles checkbox toggling for task completion status
 taskList.addEventListener('change', (e) => {
     if (e.target.classList.contains('task-checkbox')) {
         const taskItem = e.target.closest('.task-item');
