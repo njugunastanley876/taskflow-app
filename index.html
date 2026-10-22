@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task manager app</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">TaskFlow</div>
+        <nav>
+            <button id="nav-home" class="nav-btn active">Home</button>
+            <button id="nav-app" class="nav-btn">My Goals</button>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        
+        <section id="home-view" class="view active-view">
+            <div class="hero-conainer">
+                <h1>Organize Your Work<br>And life fully</h1>
+             <p>An Application to keep you focused, productive,and achieving your daily goals.</p>
+                <button id="get-started-btn" class="cta-btn">Let's Begin</button>
+            </div>
+          
+                <div class="card-preview">
+                    <h3> Boost Focus On Your Day</h3>
+                    <p> Enlist your goals and achieve them on time.</p>
+                </div>
+            </div>
+        </section>
+        <section id="app-view" class="view hidden">
+            <div class="app-container">
+                <h2>Your Dashboard</h2>
+                
+                <div id="error-banner" class="error-banner hidden"></div>
+
+                <form id="task-form" class="task-form">
+                    <input 
+                        type="text" 
+                        id="task-input" 
+                        placeholder="What needs to be done?" 
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="submit-btn">Add Task</button>
+                </form> 
+
+                <div class="controls-bar">
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">waiting</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                    </div>
+                    <span id="task-counter">0 tasks remaining</span>
+                </div>
+
+                <ul id="task-list" class="task-list">
+    
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 TaskFlow Buy Kenya Build Kenya</p>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>
