@@ -45,28 +45,37 @@ function showError(message) {
     }, 5000);
 }
 
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[char]));
+}
 const englishTitles = [
-    "complete javascript work",
-    "Finish assignments",
-    "Push work to github",
-    "Go for exercises",
-    "Take rest while reading book",
+    'complete javascript assingment',
+    'review pull requests',
+    'practice DOM manipulation',
+    'prepare presentation slides',
 ];
+
 async function fetchTasks() {
     try {
-        const response = await fetch(`${API_URL}?_limit=4`)
+        const response = await fetch(`${API_URL}?_limit=4`);
         if (!response.ok) throw new Error('Failed to fetch tasks.');
 
         const data = await response.json();
-      
+
         tasks = data.map((item, index) => ({
             id: item.id,
-            title: englishTitles[index] || item.title,
-            completed:item.completed
+            title: englishTitles[index] || 'Task ${index + 1}',
+            completed: item.completed
         }));
         renderTasks();
     } catch (error) {
-        showError('could not load tasks. please check your internet connection.');
+        showError('Could not load tasks. Please check your internet connection.');
         console.error(error);
     }
 }
@@ -82,24 +91,23 @@ async function postTask(newTaskTitle) {
                 title: newTaskTitle,
                 completed: false,
                 userId: 1
-            }),
+            })
         });
 
         if (!response.ok) throw new Error('Failed to save task on server.');
 
         const savedTask = await response.json();
-        
-      
+
         tasks.unshift({
-            id: Date.now(), 
+            id: savedTask.id ?? Date.now(),
             title: savedTask.title,
             completed: false
         });
-        
+
         renderTasks();
     } catch (error) {
         showError('Error adding task. Saved locally instead.');
-    
+
         tasks.unshift({
             id: Date.now(),
             title: newTaskTitle,
@@ -115,11 +123,11 @@ function renderTasks() {
     const filteredTasks = tasks.filter(task => {
         if (currentFilter === 'pending') return !task.completed;
         if (currentFilter === 'completed') return task.completed;
-        return true; 
+        return true;
     });
 
     if (filteredTasks.length === 0) {
-        taskList.innerHTML = `<li style="text-align: center; padding: 1.5rem; color: #64748b;">No tasks found.</li>`;
+        taskList.innerHTML = '<li style="text-align: center; padding: 1.5rem; color: #3b4451;">No tasks found.</li>';
     }
 
     filteredTasks.forEach(task => {
@@ -142,15 +150,13 @@ function renderTasks() {
 }
 
 function updateCounter() {
-    const pendingCount = tasks.filter(t => !t.completed).length;
-    taskCounter.textContent = `${pendingCount} task${pendingCount === 1 ? '' : 's'} remaining`;
-}
+    const pendingCount = tasks.filter(task => !task.completed).length;
 
-
-function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
+    if (pendingCount === 1) {
+        taskCounter.textContent = '1 task remaining';
+    } else {
+        taskCounter.textContent = `${pendingCount} tasks remaining`;
+    }
 }
 
 taskForm.addEventListener('submit', (e) => {
@@ -163,7 +169,6 @@ taskForm.addEventListener('submit', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-
     if (e.target === navHome) switchView('home');
     if (e.target === navApp || e.target === getStartedBtn) switchView('app');
 
@@ -176,8 +181,10 @@ document.addEventListener('click', (e) => {
 
     if (e.target.classList.contains('delete-btn')) {
         const taskItem = e.target.closest('.task-item');
+        if (!taskItem) return;
+
         const taskId = Number(taskItem.dataset.id);
-        tasks = tasks.filter(t => t.id !== taskId);
+        tasks = tasks.filter(task => task.id !== taskId);
         renderTasks();
     }
 });
@@ -185,9 +192,11 @@ document.addEventListener('click', (e) => {
 taskList.addEventListener('change', (e) => {
     if (e.target.classList.contains('task-checkbox')) {
         const taskItem = e.target.closest('.task-item');
+        if (!taskItem) return;
+
         const taskId = Number(taskItem.dataset.id);
-        const task = tasks.find(t => t.id === taskId);
-        
+        const task = tasks.find(item => item.id === taskId);
+
         if (task) {
             task.completed = e.target.checked;
             renderTasks();
