@@ -46,13 +46,7 @@ function showError(message) {
 }
 
 function escapeHTML(str) {
-    return String(str).replace(/[&<>"']/g, char => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    }[char]));
+   return str;
 }
 const englishTitles = [
     'complete javascript assingment',
